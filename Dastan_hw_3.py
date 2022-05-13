@@ -1,77 +1,52 @@
-class Fraction():
-    def __init__(self, numerator, denominator):
-        self.numerator = numerator
-        self.denominator = denominator
-        self.canonize()
+def num(a, b):
+    if a == 0:
+        return b
+    else:
+        return num(b % a, a)
 
-    @staticmethod
-    def fromstr(string):
-        return Fraction(*(int(i.strip()) for i in string.split('/')))
 
-    def canonize(self):
-        def gcd(a, b):
-            while a != 0 and b != 0:
-                if a > b:
-                    a %= b
-                else:
-                    b %= a
-            return a + b
-
-        g = gcd(self.numerator, self.denominator)
-        self.numerator //= g
-        self.denominator //= g
-
-    def __float__(self):
-        return self.numerator / self.denominator
-
-    def __trunc__(self):
-        return self.numerator // self.denominator
-
-    def __int__(self):
-        return self.__trunc__()
+class Fraction:
+    def __init__(self, numertor, denumerator):
+        hcf1 = num(numertor, denumerator)
+        self.numertor = numertor // hcf1
+        self.denumerator = denumerator // hcf1
 
     def __str__(self):
-        return f"{self.numerator}/{self.denominator}"
-
-    def __repr__(self):
-        return f"Fraction({str(self)})"
-
-    def __round__(self, ndigits=None, /):
-        return round(float(self), ndigits)
-
-    def __add__(self, value):
-        return Fraction(
-            self.numerator * value.denominator + value.numerator * self.denominator,
-            self.denominator * value.denominator
-        )
-
-    def __mul__(self, value):
-        return Fraction(
-            self.numerator * value.numerator,
-            self.denominator * value.denominator
-        )
-
-    def __neg__(self):
-        return Fraction(
-            -self.numerator,
-            self.denominator
-        )
-
-    def __sub__(self, value, /):
-        return Fraction(
-            self.numerator * value.denominator - value.numerator * self.denominator,
-            self.denominator * value.denominator
-        )
-
-    def __truediv__(self, value):
-        return Fraction(
-            self.numerator * value.denominator,
-            self.denominator * value.numerator
-        )
+        if self.denumerator == 1:
+            return str(self.numertor)
 
 
-print(Fraction(5, 7) / Fraction(1, 5) + Fraction(7, 11) * Fraction(11, 7))
+        elif self.numertor > self.denumerator:
+            return str(self.numertor // self.denumerator) + " " + \
+                   str(Fraction(self.numertor % self.denumerator, self.denumerator))
 
-print(Fraction.fromstr(input()))
+        else:
+            return str(self.numertor) + "/" + str(self.denumerator)
 
-4
+    def __add__(self, other):
+        new_numertor = self.numertor * other.denumerator + other.numertor * self.denumerator
+        new_denumerator = self.denumerator * other.denumerator
+        return Fraction(new_numertor, new_denumerator)
+
+    def __sub__(self, other):
+        new_numertor = self.numertor * other.denumerator - other.numertor * self.denumerator
+        new_denumerator = self.denumerator * other.denumerator
+        return Fraction(new_numertor, new_denumerator)
+
+    def __mul__(self, other):
+        new_numertor = self.numertor * other.numertor
+        new_denumerator = self.denumerator * other.denumerator
+        return Fraction(new_numertor, new_denumerator)
+
+    def __floordiv__(self, other):
+        new_num = self.numertor // other.denumerator
+        new_den = self.denumerator // other.denumerator
+        return Fraction(new_num, new_den)
+
+
+a = Fraction(4, 5)
+b = Fraction(4, 5)
+print(a + b)
+print(a - b)
+print(a * b)
+print(a // b)
